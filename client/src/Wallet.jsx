@@ -1,23 +1,13 @@
 import server from "./server";
-import * as secp from "ethereum-cryptography/secp256k1";
-import { toHex } from "ethereum-cryptography/utils";
+import localWallets from "./localWallets";
 
-function Wallet({
-  address,
-  setAddress,
-  balance,
-  setBalance,
-  privateKey,
-  setPrivateKey,
-}) {
+function Wallet({ user, setUser, balance, setBalance }) {
   async function onChange(evt) {
-    const privateKey = evt.target.value;
-    setPrivateKey(privateKey);
+    const selectedUser = evt.target.value;
+    setUser(selectedUser);
 
-    const address = toHex(secp.getPublicKey(privateKey));
-    setAddress(address);
-
-    if (address) {
+    if (selectedUser) {
+      const address = localWallets.getAddress(selectedUser);
       const {
         data: { balance },
       } = await server.get(`balance/${address}`);
@@ -30,18 +20,18 @@ function Wallet({
   return (
     <div className="container wallet">
       <h1>Your Wallet</h1>
-
       <label>
-        Private Key
-        <input
-          placeholder="Type an address, for example: 0x1"
-          value={privateKey}
-          onChange={onChange}
-        ></input>
+        Wallet Address
+        <select onChange={onChange} value={user}>
+          <option value="">--- please choose a user ---</option>
+          {localWallets.USERS.map((user, index) => (
+            <option key={index} value={user}>
+              {user}
+            </option>
+          ))}
+        </select>
       </label>
-
-      <div> Address: {address.slice(0, 10)}...</div>
-
+      <div className="balance">Address: {localWallets.getAddress(user)}</div>
       <div className="balance">Balance: {balance}</div>
     </div>
   );
