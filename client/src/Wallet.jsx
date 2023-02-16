@@ -6,11 +6,16 @@ function Wallet({ user, setUser, balance, setBalance }) {
     const selectedUser = evt.target.value;
     setUser(selectedUser);
 
+    console.log(selectedUser);
+
     if (selectedUser) {
       const address = localWallets.getAddress(selectedUser);
+      console.log(address);
       const {
         data: { balance },
       } = await server.get(`balance/${address}`);
+
+      console.log(balance);
       setBalance(balance);
     } else {
       setBalance(0);

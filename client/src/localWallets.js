@@ -69,16 +69,16 @@ const getPrivateKey = (user) => {
  * @returns the user's public key
  */
 
-const getPublicKey = (user) => {
-  if (!user) return null;
-  return hexToBytes(secp.getPublicKey(ACCOUNT_KEYS.get(user).privateKey));
-};
+// const getPublicKey = (user) => {
+//   if (!user) return null;
+//   return hexToBytes(secp.getPublicKey(ACCOUNT_KEYS.get(user).privateKey));
+// };
 
 //or
-// const getPublicKey = (user) => {
-//     if (!user) return null;
-//     return hexToBytes(ACCOUNT_KEYS.get(user).public);
-//   };
+const getPublicKey = (user) => {
+  if (!user) return null;
+  return hexToBytes(ACCOUNT_KEYS.get(user).publicKey);
+};
 
 /**
  * Get Address from public key of user
@@ -88,10 +88,15 @@ const getPublicKey = (user) => {
 
 const getAddress = (user) => {
   if (!user) return null;
+  console.log(user);
   const publicKey = getPublicKey(user);
+  console.log(publicKey);
   const hash = keccak256(publicKey.slice(1));
+  console.log(hash);
   // address is last 20 bytes of hashed publickey
-  return toHex(hash.slice(-20).toUpperCase());
+  const address = toHex(hash.slice(-20)).toUpperCase();
+  console.log(address);
+  return address;
 };
 
 /**
